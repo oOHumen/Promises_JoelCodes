@@ -6,8 +6,9 @@
  * @param {*} transformer 
  * @returns {Promise}
  */
-function mapPromise(promise, transformer){
+function mapPromise(promise, transformer) {
   return new Promise((resolve, reject) => {
+    promise.then((res) => resolve(transformer(res))).catch(reject);
     /* IMPLEMENT ME!! */
   });
 }
@@ -19,10 +20,17 @@ function mapPromise(promise, transformer){
  * @param {Promise<number | string>} numberPromise 
  * @returns {Promise<number>}
  */
-function squarePromise(numberPromise){
+function squarePromise(numberPromise) {
   return numberPromise
-    .then(/* IMPLEMENT ME! */);
+    .then((num) => {
+      if (Number(num)) {
+        return num * num;
+      } else {
+        throw `Cannot convert '${num}' to a number!`;
+      }
+    });
 }
+
 
 /**
  * EXERCISE 3
@@ -30,9 +38,9 @@ function squarePromise(numberPromise){
  * @param {Promise<number | string>} numberPromise 
  * @returns {Promise<number>}
  */
-function squarePromiseOrZero(promise){
+function squarePromiseOrZero(promise) {
   return squarePromise(promise)
-    .catch(/* IMPLEMENT ME! */);
+    .catch(() => 0);
 }
 
 /**
@@ -41,20 +49,24 @@ function squarePromiseOrZero(promise){
  * @param {Promise} promise 
  * @returns {Promise}
  */
-function switcheroo(promise){
-  return promise.then(/* IMPLEMENT ME */);
+function switcheroo(promise) {
+  return promise.then(consumer, handler);
 }
 
 /**
  * @callback consumer
  * @param {*} value
  */
-
+function consumer(value) {
+  return Promise.reject(value);
+}
 /**
  * @callback handler
  * @param {*} error
  */
-
+function handler(error) {
+  return Promise.resolve(error);
+}
 module.exports = {
   mapPromise,
   squarePromise,
